@@ -4,6 +4,8 @@ use clap::Parser;
 use std::io::{self, BufRead};
 use std::fs::File;
 use std::path::Path;
+use std::result;
+use anyhow::{Context, Result};
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
@@ -37,22 +39,42 @@ fn main() {
     //         println!("{}", line);
     //     }
     // }
-    if let Ok(lines) = read_lines(args.path) {
-        // Consumes the iterator, returns an (Optional) String
-        for line in lines {
-            if let Ok(line) = line {
-                // todo!("need to improve nest 'if' statment");
-                if line.contains(&args.pattern) {
-                    println!("{}", line);
+    match read_lines(args.path) {
+        Ok(lines) => {
+            for line in lines {
+                if let Ok(line) = line {
+                    // todo!("need to improve nest 'if' statment");
+                    if line.contains(&args.pattern) {
+                        println!("{}", line);
+                    }
                 }
             }
-        }
+        },
+        Err(error) => {println!("{}", error);}
     }
+
+    // if let Ok(lines) = read_lines(args.path) {
+    //     // Consumes the iterator, returns an (Optional) String
+    //     for line in lines {
+    //         if let Ok(line) = line {
+    //             // todo!("need to improve nest 'if' statment");
+    //             if line.contains(&args.pattern) {
+    //                 println!("{}", line);
+    //             }
+    //         }
+    //     }
+    // } else {
+    //     println!("error");
+    // }
 
 }
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
 where P: AsRef<Path>, {
-    let file = File::open(filename)?;
+    let result = File::open(filename);
+    let file = match result {
+        Ok(file) => {file},
+        Err(error) => {return Err(error.into());}
+    };
     Ok(io::BufReader::new(file).lines())
 }
