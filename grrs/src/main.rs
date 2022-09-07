@@ -26,9 +26,9 @@ fn main() {
 
 
 
-#[test]
-fn find_a_match() {
-    let mut result = Vec::new();
-    grrs::find_matches(std::path::PathBuf::from("Cargo.toml"), "[dependencies]", &mut result);
-    assert_eq!(result, b"[dependencies]\n");
-}
+// #[test]
+// fn find_a_match() {
+//     let mut result = Vec::new();
+//     grrs::find_matches(std::path::PathBuf::from("Cargo.toml"), "[dependencies]", &mut result);
+//     assert_eq!(result, b"[dependencies]\n");
+// }
